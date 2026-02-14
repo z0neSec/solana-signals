@@ -306,8 +306,8 @@ export default function NarrativeDetailPage() {
                     </div>
                   )}
                   <div className="flex items-center gap-4 text-xs text-text-tertiary">
-                    {idea.effort && <span className="px-2 py-0.5 bg-border-subtle rounded">⏱ {idea.effort}</span>}
-                    {idea.business_model && <span className="px-2 py-0.5 bg-border-subtle rounded">💰 {idea.business_model}</span>}
+                    {idea.effort && <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-border-subtle rounded"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"/><polyline points="12 6 12 12 16 14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>{idea.effort}</span>}
+                    {idea.business_model && <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-border-subtle rounded"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23" strokeWidth="2"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>{idea.business_model}</span>}
                   </div>
                   {idea.market_size && (
                     <p className="text-xs text-text-tertiary italic">Market: {idea.market_size}</p>
