@@ -30,25 +30,29 @@ Frontend runs at: http://localhost:3000
 
 ## Production Deployment
 
-### Option 1: Vercel + Railway (Recommended for Hackathon)
+The app is currently deployed:
 
-**Frontend (Vercel)**
+| Service | Platform | URL |
+|---------|----------|-----|
+| Frontend | Vercel | [solana-signals.vercel.app](https://solana-signals.vercel.app) |
+| Backend | Render | [solana-signals.onrender.com](https://solana-signals.onrender.com) |
+
+### Frontend (Vercel)
 
 1. Push code to GitHub
 2. Go to [vercel.com](https://vercel.com)
 3. Import your repository
 4. Set root directory to `frontend`
 5. Add environment variable:
-   - `API_URL` = Your Railway backend URL
+   - `NEXT_PUBLIC_API_URL` = `https://solana-signals.onrender.com/api`
 
-**Backend (Railway)**
+### Backend (Render)
 
-1. Go to [railway.app](https://railway.app)
-2. New Project → Deploy from GitHub
-3. Select your repository
-4. Set root directory to `backend`
-5. Add environment variables from `.env.example`
-6. Railway auto-detects Python and deploys
+1. Go to [render.com](https://render.com)
+2. New Web Service → Connect GitHub repo
+3. Set root directory to `backend`, runtime: Docker
+4. Add environment variables from `.env.example`
+5. Render builds from Dockerfile and deploys
 
 **Cost**: Free tier for both (sufficient for demo)
 

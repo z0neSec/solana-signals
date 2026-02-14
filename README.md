@@ -2,6 +2,10 @@
 
 > Detecting emerging narratives on Solana before they become obvious.
 
+**Live App**: [solana-signals.vercel.app](https://solana-signals.vercel.app)  
+**API**: [solana-signals.onrender.com](https://solana-signals.onrender.com/api/health)  
+**Repo**: [github.com/z0neSec/solana-signals](https://github.com/z0neSec/solana-signals)
+
 ## What This Does
 
 Pulse monitors onchain activity, developer momentum, and social signals across the Solana ecosystem to surface emerging narratives **fortnightly**. Each detected narrative includes:
@@ -309,6 +313,18 @@ solana-signals/
 | **Originality of narratives** | Novelty scoring (1.5× bonus for first-detections), specific labels (not generic "DeFi"), keyword classification across 16 categories |
 | **Practicality of build ideas** | Each idea includes problem/solution/business model/effort estimate; 30+ curated ideas across 11 categories |
 | **Clarity** | Evidence chains with source links, decomposed confidence scores, methodology transparency, print-ready reports |
+
+---
+
+---
+
+## Links
+
+| Resource | URL |
+|----------|-----|
+| Live Dashboard | [solana-signals.vercel.app](https://solana-signals.vercel.app) |
+| API Health Check | [solana-signals.onrender.com/api/health](https://solana-signals.onrender.com/api/health) |
+| Source Code | [github.com/z0neSec/solana-signals](https://github.com/z0neSec/solana-signals) |
 
 ---
 
