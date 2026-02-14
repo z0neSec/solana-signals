@@ -13,7 +13,7 @@ async def run_ingestion_pipeline_in_memory() -> list[dict[str, Any]]:
     """
     from ingestors import onchain, social, github
 
-    logger.info("🚀 Starting ingestion (in-memory)...")
+    logger.info("Starting ingestion (in-memory)...")
 
     onchain_signals = await onchain.ingest_all()
     github_signals = await github.ingest_all()

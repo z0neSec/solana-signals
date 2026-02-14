@@ -59,7 +59,7 @@ async def get_embedding(text: str) -> list[float]:
 
 async def embed_signals(signals: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Add 'embedding' key to every signal dict."""
-    logger.info(f"🧠 Generating embeddings for {len(signals)} signals...")
+    logger.info(f"Generating embeddings for {len(signals)} signals...")
 
     # Try batch via OpenAI first
     texts = [s.get("description", "") for s in signals]
@@ -78,7 +78,7 @@ async def embed_signals(signals: list[dict[str, Any]]) -> list[dict[str, Any]]:
             for sig, emb in zip(signals, all_embeddings):
                 sig["embedding"] = emb
 
-            logger.info("✅ Used OpenAI embeddings")
+            logger.info("Used OpenAI embeddings")
             return signals
         except Exception as e:
             logger.warning(f"OpenAI batch embed failed ({e}), falling back to hash vectors")
@@ -87,7 +87,7 @@ async def embed_signals(signals: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for sig in signals:
         sig["embedding"] = _deterministic_vector(sig.get("description", ""))
 
-    logger.info("✅ Used deterministic fallback embeddings")
+    logger.info("Used deterministic fallback embeddings")
     return signals
 
 

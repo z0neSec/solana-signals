@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan handler."""
-    logger.info("🚀 Starting Solana Signal Intelligence...")
+    logger.info("Starting Solana Signal Intelligence...")
     logger.info(f"Environment: {get_settings().environment}")
 
     # Run the pipeline once on startup so there is data to display

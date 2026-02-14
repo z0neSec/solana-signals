@@ -436,7 +436,7 @@ def get_build_ideas(label: str) -> list[dict]:
 
 async def generate_build_ideas(narratives: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Enrich narratives with labels, summaries, why_now, and build ideas."""
-    logger.info(f"💡 Generating ideas for {len(narratives)} narratives...")
+    logger.info(f"Generating ideas for {len(narratives)} narratives...")
 
     for narrative in narratives:
         signals = narrative.get("signals", [])
@@ -523,5 +523,5 @@ async def generate_build_ideas(narratives: list[dict[str, Any]]) -> list[dict[st
         except Exception as e:
             logger.warning(f"GPT enrichment failed ({e}), keeping heuristic labels")
 
-    logger.info("✅ Narrative enrichment complete")
+    logger.info("Narrative enrichment complete")
     return narratives

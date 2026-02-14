@@ -222,7 +222,7 @@ async def run_processing_pipeline(signals: list[dict] | None = None) -> dict[str
         "signals_processed": len(signals),
         "narrative_labels": [n.get("label", "") for n in enriched],
     }
-    logger.info(f"✅ Processing complete: {len(_cached_narratives)} narratives ({created_count} persisted to DB)")
+    logger.info(f"Processing complete: {len(_cached_narratives)} narratives ({created_count} persisted to DB)")
     return summary
 
 
@@ -230,7 +230,7 @@ async def run_full_pipeline() -> dict[str, Any]:
     """Run ingestion + processing back-to-back, passing signals in memory."""
     from ingestors.coordinator import run_ingestion_pipeline_in_memory
 
-    logger.info("🚀 Running full pipeline (in-memory mode)...")
+    logger.info("Running full pipeline (in-memory mode)...")
 
     # Collect signals
     all_signals = await run_ingestion_pipeline_in_memory()

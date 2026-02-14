@@ -156,7 +156,7 @@ async def fetch_recent_token_activity() -> list[dict]:
 
 async def ingest_all() -> list[dict[str, Any]]:
     """Ingest all onchain signals from Helius."""
-    logger.info("📡 Ingesting onchain signals from Helius...")
+    logger.info("Ingesting onchain signals from Helius...")
     signals = []
 
     # 1. Fetch activity for tracked programs
@@ -168,5 +168,5 @@ async def ingest_all() -> list[dict[str, Any]]:
     network_sigs = await fetch_recent_token_activity()
     signals.extend(network_sigs)
 
-    logger.info(f"✅ Collected {len(signals)} onchain signals")
+    logger.info(f"Collected {len(signals)} onchain signals")
     return signals

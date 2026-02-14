@@ -73,7 +73,7 @@ async def fetch_trending_repos() -> list[dict]:
                                 "timestamp": repo.get("pushed_at", datetime.now(timezone.utc).isoformat()),
                                 "description": (
                                     f"{repo.get('full_name', 'unknown')} — {(repo.get('description') or 'No description')[:200]} "
-                                    f"(⭐{stars} 🍴{forks})"
+                                    f"({stars} stars, {forks} forks)"
                                 ),
                                 "author": owner.get("login", "unknown"),
                                 "source": "github",
@@ -153,7 +153,7 @@ async def fetch_recent_commits() -> list[dict]:
 
 async def ingest_all() -> list[dict[str, Any]]:
     """Ingest all GitHub signals."""
-    logger.info("🐙 Ingesting GitHub signals...")
+    logger.info("Ingesting GitHub signals...")
     signals = []
 
     repos = await fetch_trending_repos()
@@ -170,5 +170,5 @@ async def ingest_all() -> list[dict[str, Any]]:
             seen.add(s["id"])
             unique.append(s)
 
-    logger.info(f"✅ Collected {len(unique)} GitHub signals")
+    logger.info(f"Collected {len(unique)} GitHub signals")
     return unique

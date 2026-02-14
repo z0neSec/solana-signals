@@ -205,7 +205,7 @@ async def ingest_all() -> list[dict[str, Any]]:
         logger.info("⚠️  Twitter rate-limited — injecting curated social signals")
         unique = _curated_social_signals()
 
-    logger.info(f"✅ Collected {len(unique)} social signals")
+    logger.info(f"Collected {len(unique)} social signals")
     return unique
 
 
