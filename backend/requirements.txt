@@ -1,0 +1,38 @@
+# Web Framework
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+python-dotenv>=1.0.0
+pydantic>=2.5.3
+pydantic-settings>=2.1.0
+
+# HTTP Clients
+httpx>=0.26.0
+aiohttp>=3.9.1
+
+# Database
+supabase>=2.3.4
+asyncpg>=0.29.0
+
+# Vector Database
+pinecone-client>=5.0.0
+
+# AI/ML
+openai>=1.10.0
+numpy>=1.26.0
+scikit-learn>=1.4.0
+# hdbscan optional - install separately if needed
+
+# Scheduling
+apscheduler>=3.10.4
+
+# Data Processing
+pandas>=2.1.4
+tiktoken>=0.5.2
+
+# Twitter/X
+tweepy>=4.14.0
+
+# Utilities
+tenacity>=8.2.3
+rich>=13.7.0
+orjson>=3.9.10
