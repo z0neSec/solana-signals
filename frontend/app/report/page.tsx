@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { StatusBadge, ConfidenceBar } from "@/components/DataDisplay";
 import { SkeletonCard } from "@/components/Skeleton";
 import { EmptyState, ErrorState } from "@/components/States";
-import { fetchDashboard, fetchNarratives, exportMarkdown, Narrative } from "@/lib/api";
+import { fetchDashboard, fetchNarratives, api, Narrative } from "@/lib/api";
 
 export default function ReportPage() {
   const [narratives, setNarratives] = useState<Narrative[]>([]);
@@ -40,7 +40,8 @@ export default function ReportPage() {
 
   const handleExportMarkdown = async () => {
     try {
-      const markdown = await exportMarkdown();
+      const result = await api.exportMarkdown();
+      const markdown = result.markdown;
       const blob = new Blob([markdown], { type: "text/markdown" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
