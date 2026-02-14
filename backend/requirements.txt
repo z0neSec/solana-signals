@@ -14,7 +14,7 @@ supabase>=2.3.4
 asyncpg>=0.29.0
 
 # Vector Database
-pinecone-client>=5.0.0
+pinecone>=5.0.0
 
 # AI/ML
 openai>=1.10.0
