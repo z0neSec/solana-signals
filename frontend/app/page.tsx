@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { MetricCard, NarrativeCard } from "@/components/DataDisplay";
 import { SkeletonCard, SkeletonMetricCard } from "@/components/Skeleton";
 import { EmptyState, ErrorState } from "@/components/States";
 import { AnimateOnScroll } from "@/hooks/useScrollAnimation";
 import { fetchDashboard, fetchSignals, Narrative, Signal } from "@/lib/api";
+import { formatTimeAgo } from "@/lib/utils";
+import { DomainDistributionChart, NarrativeConfidenceChart, SignalTimelineChart } from "@/components/Charts";
 
 interface Stats {
   total_narratives: number;
@@ -16,70 +18,68 @@ interface Stats {
   last_updated: string;
 }
 
-// Helper function to format timestamps as relative time
-function formatTimeAgo(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMins / 60);
-  const diffDays = Math.floor(diffHours / 24);
-
-  if (diffMins < 1) return "just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString();
-}
-
 export default function Dashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [narratives, setNarratives] = useState<Narrative[]>([]);
   const [recentSignals, setRecentSignals] = useState<Signal[]>([]);
+  const [allSignals, setAllSignals] = useState<Signal[]>([]);
+  const [domainCounts, setDomainCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [data, signalData] = await Promise.all([
-          fetchDashboard(),
-          fetchSignals({ limit: 5 }),
-        ]);
-        
-        // Compute active narratives (non-DECLINING)
-        const activeCount = data.narratives.filter(
-          (n) => n.status !== "DECLINING"
-        ).length;
-        
-        // Compute average confidence (already 0-100)
-        const avgConf = data.narratives.length > 0
-          ? Math.round(
-              data.narratives.reduce((sum, n) => sum + n.confidence, 0) /
-                data.narratives.length
-            )
-          : 0;
-        
-        setStats({
-          total_narratives: data.summary.total_narratives,
-          active_narratives: activeCount,
-          total_signals: data.summary.total_signals,
-          avg_confidence: avgConf,
-          last_updated: formatTimeAgo(data.last_updated),
-        });
-        
-        setNarratives(data.narratives.slice(0, 4));
-        setRecentSignals(signalData.signals || []);
-      } catch (err) {
-        console.error("Dashboard fetch error:", err);
-        setError("Failed to load dashboard data. Is the backend running?");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchData = useCallback(async (isRefresh = false) => {
+    try {
+      if (!isRefresh) setLoading(true);
+      const [data, signalData] = await Promise.all([
+        fetchDashboard(),
+        fetchSignals({ limit: 100 }),
+      ]);
+      
+      // Compute active narratives (non-DECLINING)
+      const activeCount = data.narratives.filter(
+        (n) => n.status !== "DECLINING"
+      ).length;
+      
+      // Compute average confidence (already 0-100)
+      const avgConf = data.narratives.length > 0
+        ? Math.round(
+            data.narratives.reduce((sum, n) => sum + n.confidence, 0) /
+              data.narratives.length
+          )
+        : 0;
 
-    fetchData();
+      // Compute domain distribution from all signals
+      const domains: Record<string, number> = {};
+      (signalData.signals || []).forEach((s: Signal) => {
+        domains[s.domain] = (domains[s.domain] || 0) + 1;
+      });
+      
+      setStats({
+        total_narratives: data.summary.total_narratives,
+        active_narratives: activeCount,
+        total_signals: data.summary.total_signals,
+        avg_confidence: avgConf,
+        last_updated: formatTimeAgo(data.last_updated),
+      });
+      
+      setNarratives(data.narratives.slice(0, 4));
+      setRecentSignals((signalData.signals || []).slice(0, 5));
+      setAllSignals(signalData.signals || []);
+      setDomainCounts(domains);
+    } catch (err) {
+      console.error("Dashboard fetch error:", err);
+      if (!isRefresh) setError("Failed to load dashboard data. Is the backend running?");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchData();
+    // Auto-refresh every 60 seconds
+    const interval = setInterval(() => fetchData(true), 60000);
+    return () => clearInterval(interval);
+  }, [fetchData]);
 
   const retry = () => {
     setLoading(true);
@@ -162,6 +162,42 @@ export default function Dashboard() {
 
       {/* Top Narratives */}
       <AnimateOnScroll delay={100}>
+        <section aria-labelledby="charts-heading">
+          <h2 id="charts-heading" className="font-serif text-2xl mb-6">
+            Signal Analytics
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Domain Distribution */}
+            <div className="card-static p-5">
+              <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Signal Sources</h3>
+              {Object.keys(domainCounts).length > 0 ? (
+                <DomainDistributionChart domainCounts={domainCounts} />
+              ) : (
+                <div className="h-48 flex items-center justify-center text-text-tertiary text-sm">No signal data</div>
+              )}
+            </div>
+            {/* Narrative Confidence */}
+            <div className="card-static p-5 md:col-span-2">
+              <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Narrative Confidence</h3>
+              {narratives.length > 0 ? (
+                <NarrativeConfidenceChart narratives={narratives} />
+              ) : (
+                <div className="h-56 flex items-center justify-center text-text-tertiary text-sm">No narratives</div>
+              )}
+            </div>
+          </div>
+          {/* Signal Timeline */}
+          {allSignals.length > 0 && (
+            <div className="card-static p-5 mt-6">
+              <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Signal Activity Timeline</h3>
+              <SignalTimelineChart signals={allSignals} />
+            </div>
+          )}
+        </section>
+      </AnimateOnScroll>
+
+      {/* Narrative Cards */}
+      <AnimateOnScroll delay={200}>
         <section aria-labelledby="narratives-heading">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -222,7 +258,7 @@ export default function Dashboard() {
       </AnimateOnScroll>
 
       {/* Signal Activity */}
-      <AnimateOnScroll delay={200}>
+      <AnimateOnScroll delay={300}>
         <section aria-labelledby="activity-heading">
           <h2 id="activity-heading" className="font-serif text-2xl mb-6">
             Recent Activity
@@ -273,7 +309,7 @@ export default function Dashboard() {
                 View all signals
               </Link>
               <span className="text-xs text-text-tertiary">
-                Refreshed every 30 seconds
+                Auto-refreshes every 60s
               </span>
             </div>
           </div>
@@ -281,7 +317,7 @@ export default function Dashboard() {
       </AnimateOnScroll>
 
       {/* CTA Section */}
-      <AnimateOnScroll delay={300}>
+      <AnimateOnScroll delay={400}>
         <section className="relative overflow-hidden">
           <div className="gradient-border">
             <div className="relative p-8 lg:p-12 bg-gradient-brand-subtle rounded-[15px]">

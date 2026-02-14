@@ -8,20 +8,8 @@ import { SkeletonCard } from "@/components/Skeleton";
 import { ErrorState } from "@/components/States";
 import { AnimateOnScroll } from "@/hooks/useScrollAnimation";
 import { fetchNarrative, Narrative } from "@/lib/api";
-
-function formatTimeAgo(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMins / 60);
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffMins < 1) return "just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString();
-}
+import { formatTimeAgo } from "@/lib/utils";
+import { ScoreBreakdownChart } from "@/components/Charts";
 
 const domainColors: Record<string, string> = {
   onchain: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
@@ -209,23 +197,8 @@ export default function NarrativeDetailPage() {
                 </div>
               </div>
               <div className="pt-4 border-t">
-                <p className="text-xs text-text-tertiary uppercase tracking-wide mb-3">Domain Breakdown</p>
-                <div className="flex gap-4">
-                  {Object.entries(narrative.scores.domain_breakdown).map(([domain, score]) => (
-                    <div key={domain} className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-medium capitalize">{domain}</span>
-                        <span className="text-xs text-text-tertiary">{(score * 100).toFixed(0)}%</span>
-                      </div>
-                      <div className="h-2 bg-border-subtle rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-accent to-purple-500 rounded-full transition-all duration-500"
-                          style={{ width: `${Math.min(score * 100 * 3, 100)}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <p className="text-xs text-text-tertiary uppercase tracking-wide mb-3">Score Components</p>
+                <ScoreBreakdownChart scores={narrative.scores} />
               </div>
             </div>
           </section>

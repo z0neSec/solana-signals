@@ -65,7 +65,7 @@ export default function RootLayout({
                     <span className="text-text-tertiary">Refreshed fortnightly</span>
                   </div>
                   <p className="text-xs text-text-tertiary">
-                    Last updated: Feb 11, 2026
+                    Last updated: {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                   </p>
                 </div>
               </div>

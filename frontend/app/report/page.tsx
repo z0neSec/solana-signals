@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { StatusBadge, ConfidenceBar } from "@/components/DataDisplay";
 import { SkeletonCard } from "@/components/Skeleton";
 import { EmptyState, ErrorState } from "@/components/States";
-import { fetchDashboard, fetchNarratives, Narrative } from "@/lib/api";
+import { fetchDashboard, fetchNarratives, exportMarkdown, Narrative } from "@/lib/api";
 
 export default function ReportPage() {
   const [narratives, setNarratives] = useState<Narrative[]>([]);
@@ -36,6 +36,21 @@ export default function ReportPage() {
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleExportMarkdown = async () => {
+    try {
+      const markdown = await exportMarkdown();
+      const blob = new Blob([markdown], { type: "text/markdown" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `pulse-report-${new Date().toISOString().split("T")[0]}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert("Failed to export markdown. Is the backend running?");
+    }
   };
 
   const generatedAt = new Date().toLocaleDateString("en-US", {
@@ -70,12 +85,20 @@ export default function ReportPage() {
             Print-ready narrative analysis report
           </p>
         </div>
-        <button
-          onClick={handlePrint}
-          className="btn btn-primary px-6 py-2"
-        >
-          Print / Save PDF
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={handleExportMarkdown}
+            className="btn btn-secondary px-6 py-2"
+          >
+            Download Markdown
+          </button>
+          <button
+            onClick={handlePrint}
+            className="btn btn-primary px-6 py-2"
+          >
+            Print / Save PDF
+          </button>
+        </div>
       </div>
 
       {/* Report Content */}
