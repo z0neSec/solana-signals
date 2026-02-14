@@ -181,7 +181,7 @@ narrative_score = (
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/solana-signals
+git clone https://github.com/z0neSec/solana-signals
 cd solana-signals
 
 # Backend
